@@ -588,11 +588,9 @@ export function coreContext() {
     // Set up objects that might need to access properties of `context`. The order
     // might matter if dependents make calls to each other. Be wary of async calls.
     function initializeDependents() {
-      const presetsHash = context.initialHashParams.presets;
-      const presetsHashIsMergeUrl = presetsHash && /^https?:\/\//i.test(presetsHash.trim());
 
-      if (presetsHash && !presetsHashIsMergeUrl) {
-        presetManager.addablePresetIDs(new Set(presetsHash.split(',')));
+      if (context.initialHashParams.presets) {
+        presetManager.addablePresetIDs(new Set(context.initialHashParams.presets.split(',')));
       }
 
       if (context.initialHashParams.locale) {
@@ -621,8 +619,8 @@ export function coreContext() {
       // Migrate history data from localStorage to IndexedDB
       _history.migrateHistoryData();
 
-      if (presetsHashIsMergeUrl) {
-        presetManager.mergePresets(presetsHash);
+      if (context.initialHashParams.presets_merge) {
+        presetManager.mergePresetsMerge(context.initialHashParams.presets_merge);
       }
 
       if (services.maprules && context.initialHashParams.maprules) {
