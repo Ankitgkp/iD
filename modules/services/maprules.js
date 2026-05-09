@@ -215,28 +215,15 @@ export default {
             // when geometries match and tag matches are present, return a warning...
             findIssues: function (entity, graph, issues) {
                 if (this.geometryMatches(entity, graph) && this.matches(entity)) {
-                    const severity = Object.keys(selector).indexOf('error') > -1
+                    var severity = Object.keys(selector).indexOf('error') > -1
                             ? 'error'
                             : 'warning';
-                    const message = selector[severity];
+                    var message = selector[severity];
                     issues.push(new validationIssue({
                         type: 'maprules',
                         severity: severity,
-                        /**
-                         * Returns a renderer that writes the user-supplied
-                         * `message` string into a d3 selection as plain text.
-                         *
-                         * The string comes verbatim from the maprules JSON
-                         * file and must NOT be passed through the localizer
-                         * (which would treat it as a translation key and emit
-                         * a "Missing translation" warning).
-                         *
-                         * @returns {(selection: any) => void} d3 text renderer
-                         */
-                        message: function () {
-                            return function (selection) {
-                                selection.text(message);
-                            };
+                        message: function() {
+                            return message;
                         },
                         entityIds: [entity.id]
                     }));

@@ -621,35 +621,12 @@ export function coreContext() {
       _history.migrateHistoryData();
 
       if (services.maprules && context.initialHashParams.maprules) {
-        // Fetch the user-supplied maprules JSON, register each selector
-        // with `services.maprules`, and surface success/failure on the
-        // console (the rules silently affect validation, so we want some
-        // dev-visible signal that the file was actually loaded).
-        const maprulesUrl = context.initialHashParams.maprules;
-        d3_json(maprulesUrl)
-          .then(function (mapcss) {
+        d3_json(context.initialHashParams.maprules)
+          .then(mapcss => {
             services.maprules.init();
-            if (!Array.isArray(mapcss)) {
-              console.warn(  // eslint-disable-line no-console
-                '[maprules] expected the JSON at ' + maprulesUrl +
-                ' to be an array of selector objects, got ' + typeof mapcss +
-                '. No rules loaded.'
-              );
-              return;
-            }
-            mapcss.forEach(function (mapcssSelector) {
-              services.maprules.addRule(mapcssSelector);
-            });
-            console.info(  // eslint-disable-line no-console
-              '[maprules] loaded ' + mapcss.length + ' rule(s) from ' + maprulesUrl,
-              mapcss
-            );
+            mapcss.forEach(mapcssSelector => services.maprules.addRule(mapcssSelector));
           })
-          .catch(function (err) {
-            console.warn(  // eslint-disable-line no-console
-              '[maprules] failed to load rules from ' + maprulesUrl + ':', err
-            );
-          });
+          .catch(() => { /* ignore */ });
       }
 
       // if the container isn't available, e.g. when testing, don't load the UI

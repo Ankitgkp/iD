@@ -572,11 +572,7 @@ describe('maprules', function() {
 
                     expect(issues.length).to.eql(1);
                     expect(issue.entityIds).to.eql([entity.id]);
-                    var renderer = issue.message(iD.coreContext());
-                    expect(renderer).to.be.a('function');
-                    var captured;
-                    renderer({ text: function(value) { captured = value; } });
-                    expect(captured).to.eql(selector[type]);
+                    expect(issue.message(iD.coreContext())).to.eql(selector[type]);
                     expect(type).to.eql(issue.severity);
                 });
             });
