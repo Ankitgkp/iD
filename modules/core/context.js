@@ -620,24 +620,21 @@ export function coreContext() {
       // Migrate history data from localStorage to IndexedDB
       _history.migrateHistoryData();
 
-      if (context.initialHashParams.presets_merge) {
+      if (context.initialHashParams.presets_url) {
         // Fetch a user-supplied presets file and merge it into the running
         // preset index after the bundled presets have finished loading. The
         // JSON file must match the shape that `presetManager.merge` accepts,
         // which is the same shape used by `id-tagging-schema`:
         //   { presets?, fields?, categories?, defaults?, featureCollection? }
-        // Hash param name follows the same pattern as `gpx` and `maprules`
-        // (value is a URL; no `_url` suffix). It is not `presets=` because
-        // that parameter is already the built-in-preset allowlist.
-        const presetsMergeUrl = context.initialHashParams.presets_merge;
+        const presetsUrl = context.initialHashParams.presets_url;
         presetManager.ensureLoaded()
           .then(function () {
-            return d3_json(presetsMergeUrl);
+            return d3_json(presetsUrl);
           })
           .then(function (data) {
             if (!data || typeof data !== 'object' || Array.isArray(data)) {
               console.warn(  // eslint-disable-line no-console
-                '[presets_merge] expected the JSON at ' + presetsMergeUrl +
+                '[presets_url] expected the JSON at ' + presetsUrl +
                 ' to be an object with `presets`/`fields`/`categories`/`defaults` keys, got ' +
                 (Array.isArray(data) ? 'array' : typeof data) + '. No presets loaded.'
               );
@@ -645,13 +642,13 @@ export function coreContext() {
             }
             presetManager.merge(data);
             console.info(  // eslint-disable-line no-console
-              '[presets_merge] merged custom presets from ' + presetsMergeUrl,
+              '[presets_url] merged custom presets from ' + presetsUrl,
               data
             );
           })
           .catch(function (err) {
             console.warn(  // eslint-disable-line no-console
-              '[presets_merge] failed to load presets from ' + presetsMergeUrl + ':', err
+              '[presets_url] failed to load presets from ' + presetsUrl + ':', err
             );
           });
       }
